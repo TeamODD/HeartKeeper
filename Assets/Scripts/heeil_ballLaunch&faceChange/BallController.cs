@@ -6,92 +6,52 @@ public class BallController : MonoBehaviour
 {
 
     [Header("공 속성")]
-    [SerializeField] private bool showGizmo = true;
-    [SerializeField] private float speed;
     [SerializeField] private string color;
     [SerializeField] private Vector2 upWard;
     [Header("발사 속성")]
-    [SerializeField] private bool launched=false;
-    [SerializeField] private float maxAimAngle;
-    [SerializeField] private float aimMoveSpeed;
+    public bool launched=false;
+    public float launchSpeed;
+    public float maxAimAngle=120;
+    public float aimMoveSpeed=40;
 
     private Rigidbody2D rb;
-    private Camera cam;
-    private SpriteRenderer sr;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
-        cam = Camera.main;
-
-        Init();
     }
 
-    // Update is called once per frame
     void Update()
     {
         //한번 발사된 공은 비활성화
-        if (launched == true) return;
-
-        // //마우스 방향이 위를 바라보게 회전
-        // transform.up = mouseDir();
-        // upWard = mouseDir().normalized;
-        
-        // 와이퍼 움직임
-        Wiper();
-        //마우스 클릭
-        bool clicked = Mouse.current != null 
-                    && Mouse.current.leftButton.wasPressedThisFrame;
-        if (clicked && !launched) Fire();
-    }
-
-    void Init()
-    {
-        string[] colors = { "yellow", "red", "blue", "green" };
-        color = colors[UnityEngine.Random.Range(0, colors.Length)];
-
-        Color c;
-        switch (color)
+        if (launched == true)
         {
-            case "yellow": c = Color.yellow; break;
-            case "red": c = Color.red; break;
-            case "blue": c = Color.blue; break;
-            case "green": c = Color.green; break;
-            default: c = Color.white; break; // 예외시 화이트
+            var t = transform.Find("Arrow"); // 자식 이름이 정확히 "arrow"
+            if (t) t.gameObject.SetActive(false);
+
+            return;
         }
-
-        sr.color = c;
+        // 와이퍼 움직임
+        transform.rotation = Quaternion.Euler(0f, 0f, GetWiperAngle());
     }
     
-    public
-
-    void Wiper()
+    // 와이퍼처럼 -maxAimAngle ↔ +maxAimAngle 를 왕복하며 각도를 반환
+    // aimMoveSpeed: 초당 각도 변화량
+    float GetWiperAngle()
     {
-        // float t;
-        // t += Time.deltaTime;
+        float half = maxAimAngle / 2;
+        if (maxAimAngle <= 0f || aimMoveSpeed <= 0f) return 0f;
 
-        // // -1..+1로 진동하는 값 (사인파)
-        // float s = Mathf.Sin(t * Mathf.PI * 2f * Mathf.Max(0f, cyclesPerSecond));
-        // float angle = centerAngleDeg + s * Mathf.Abs(maxAngleDeg);
+        // 0→1→0으로 왕복하는 선형 파형 (속도 = aimMoveSpeed 유지)
+        float phase01 = Mathf.PingPong(Time.time * (aimMoveSpeed / (2f * half)), 1f);
 
-        // if (useLocalRotation)
-        //     transform.localRotation = Quaternion.Euler(0f, 0f, angle);
-        // else
-        //     transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        // -max ↔ +max 로 매핑
+        return Mathf.Lerp(-half, half, phase01);
     }
-    private Vector2 mouseDir()
-    {
-        Vector3 mouseScreenPos = Mouse.current.position.ReadValue();
-        Vector3 mouseWorldPos  = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-        mouseWorldPos.z = 0f;
 
-        return (mouseWorldPos - transform.position).normalized;
-    }
     
-    void Fire()
+    public void Fire()
     {
-        rb.AddForce(transform.up * speed, ForceMode2D.Impulse);
+        rb.AddForce(transform.up * launchSpeed, ForceMode2D.Impulse);
         launched = true;
     }
 
@@ -101,12 +61,10 @@ public class BallController : MonoBehaviour
         // 색이 같을 때
         if (other.color == color)
         {
-            Debug.Log("같은 색");
         }
         // 다를 때
         else
         {
-            Debug.Log("다른 색");
         }
     }
 
