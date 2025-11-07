@@ -43,20 +43,22 @@ public class SeesawLean : MonoBehaviour
         // 목표 각도만큼 기울임
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * leanSpeed);
 
-        if (leftCount > rightCount)
-        {
-            Debug.Log("왼쪽에 구슬이 " + (leftCount - rightCount).ToString() + "개 더 많음, 왼쪽으로 기욺");
-        }
-        else if (leftCount == rightCount)
-        {
-            Debug.Log("현재 평형 상태");
-        }
-        else
-        {
-            Debug.Log("오른쪽에 구슬이 " + (rightCount - leftCount).ToString() + "개 더 많음, 오른쪽으로 기욺");
-        }
+        // 기울어지는 조건 + 기울어지는 방향 확인
+        //if (leftCount > rightCount)
+        //{
+        //    Debug.Log("왼쪽에 구슬이 " + (leftCount - rightCount).ToString() + "개 더 많음, 왼쪽으로 기욺");
+        //}
+        //else if (leftCount == rightCount)
+        //{
+        //    Debug.Log("현재 평형 상태");
+        //}
+        //else
+        //{
+        //    Debug.Log("오른쪽에 구슬이 " + (rightCount - leftCount).ToString() + "개 더 많음, 오른쪽으로 기욺");
+        //}
     }
 
+    // 이걸 구슬에 옮겨야 할듯?
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 부딫히는 물체가 구슬밖에 없다고 가정
