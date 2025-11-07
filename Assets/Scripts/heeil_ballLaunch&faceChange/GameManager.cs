@@ -4,6 +4,10 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+
+    // [Header("사운드 속성")]
+    // [SerializeField] private GameObject soundManager;
+
     [Header("색깔 속성")]
     [SerializeField] private Color[] colors =
         { Color.red,Color.yellow,Color.green,Color.blue };

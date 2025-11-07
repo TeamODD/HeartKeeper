@@ -8,6 +8,8 @@ public class BallController : MonoBehaviour
     [Header("공 속성")]
     [SerializeField] private string color;
     [SerializeField] private Vector2 upWard;
+    [Header("효광음 속성")]
+    public SoundManager soundManager;
     [Header("발사 속성")]
     public bool launched=false;
     public float launchSpeed;
@@ -18,6 +20,11 @@ public class BallController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+    private void Awake()
+    {
+        if (soundManager == null)
+            soundManager = FindAnyObjectByType<SoundManager>();
     }
 
     void Update()
@@ -51,12 +58,16 @@ public class BallController : MonoBehaviour
     
     public void Fire()
     {
+        if (launched == true) return;
+        
+        soundManager.Play_shot();
         rb.AddForce(transform.up * launchSpeed, ForceMode2D.Impulse);
         launched = true;
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
+        soundManager.Play_attached();
         if (!col.collider.TryGetComponent<BallController>(out var other)) return;
         // 색이 같을 때
         if (other.color == color)
