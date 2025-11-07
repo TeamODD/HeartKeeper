@@ -5,11 +5,16 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [Header("색깔 속성")]
-    [SerializeField] private Color[] colors = { Color.yellow, Color.red, Color.blue, Color.green };
+    [SerializeField] private Color[] colors =
+        { Color.red,Color.yellow,Color.green,Color.blue };
     [SerializeField] private Color currentColor;
     [SerializeField] private Color nextColor;
-    [SerializeField] private GameObject face;
 
+    [Header("초상화 속성")]
+    [SerializeField] private GameObject face;
+    private SpriteRenderer faceSpriteRenderer;
+    [SerializeField] private Sprite[] sprites;
+    [SerializeField] private Sprite defaultSprite;
     [Header("소환 속성")]
     [SerializeField] private Transform ballSpawnPoint;
     [SerializeField] private GameObject ballPrefab;
@@ -23,17 +28,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float intervalTime = 3f;
     float nextSetBallTime = -1f;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        faceSpriteRenderer = face.gameObject.GetComponent<SpriteRenderer>();
+        faceSpriteRenderer.sprite = defaultSprite;
+        
         currentColor = colors[Random.Range(0, colors.Length)];
         nextColor = colors[Random.Range(0, colors.Length)];
 
         SetBall();
     }
-
-    // Update is called once per frame
     void Update()
     {
         // 마우스 클릭 (BallControaller.Fire() 호출)
@@ -60,11 +64,22 @@ public class GameManager : MonoBehaviour
         InitBall(currentBall);
         ApplyColorToObject(currentBall, currentColor);
 
-        ApplyColorToObject(face, nextColor);
+        ApplySpriteByColorToFace(nextColor);
 
         // 2) 색 파이프라인 밀기 (current ← next, next ← random)
         currentColor = nextColor;
         nextColor = colors[Random.Range(0, colors.Length)];
+
+        
+    }
+    public void ApplySpriteByColorToFace(Color color)
+    {
+        Sprite sp =
+            color == colors[0] ? sprites[0] :
+            color == colors[1] ? sprites[1] :
+            color == colors[2] ? sprites[2] :
+            color == colors[3] ? sprites[3] : defaultSprite;
+        faceSpriteRenderer.sprite = sp;
     }
     
     public void InitBall(GameObject ball)
