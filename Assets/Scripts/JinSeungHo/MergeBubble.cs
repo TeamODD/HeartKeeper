@@ -2,7 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MergeBead : MonoBehaviour
+public class MergeBubble : MonoBehaviour
 {
     public LayerMask areaLM;
     private Rigidbody2D rb;
@@ -44,10 +44,12 @@ public class MergeBead : MonoBehaviour
 
         // 현재 위치 = 사각형의 위치
         this.transform.position = overlappingAreas[0].transform.position;
-        this.transform.SetParent(overlappingAreas[0].transform);
 
         // 현재 이 구슬을 사각형의 부모로 편입
         this.transform.SetParent(overlappingAreas[0].transform, true);
+
+        // 현재 위치 사각형의 버블이 붙은 상태임을 체크해준다.
+        overlappingAreas[0].GetComponent<CheckBubble>().isBubbleOn = true;
 
         // 위치 고정
         rb.bodyType = RigidbodyType2D.Kinematic;

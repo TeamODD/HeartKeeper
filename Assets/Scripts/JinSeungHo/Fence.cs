@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class DeleteBead : MonoBehaviour
+public class Fence : MonoBehaviour
 {
-    
-    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -14,5 +12,10 @@ public class DeleteBead : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Destroy(collision.gameObject);
     }
 }
