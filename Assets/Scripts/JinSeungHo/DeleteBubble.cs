@@ -36,14 +36,14 @@ public class DeleteBubble : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            DeleteUnconnectedBubble();
-            Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
-        }
-    }
+    //void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        DeleteUnconnectedBubble();
+    //        Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
+    //    }
+    //}
 
     private void DeleteUnconnectedBubble()
     {
@@ -133,12 +133,12 @@ public class DeleteBubble : MonoBehaviour
         Vector2 currentPos = currentBubble.transform.position;
 
         // 고정된 반지름을 이용해 서치
-        float bubbleRadius = 1.2f;
+        float bubbleRadius = 1f;
 
         Collider2D[] neighbors = Physics2D.OverlapCircleAll(
             currentPos,
-            bubbleRadius,        // 인접 구슬 감지 범위 = 반지름의 2.1배
-            LayerMask.GetMask("Bubble")
+            bubbleRadius,
+            LayerMask.GetMask("BoxArea")
         );
 
         foreach (Collider2D neighborCd in neighbors)
