@@ -16,59 +16,77 @@ public class TitleManager : MonoBehaviour
     [Header("=== 패널 참조 ===")]
     [SerializeField] private GameObject howPanel;
     [SerializeField] private GameObject settingPanel;
-    [SerializeField] private GameObject BackGroundPanel;
+    [SerializeField] private GameObject MenuBackPanel;
     [SerializeField] private GameObject resentPanel;
 
     [Header("=== 최초 선택 포커스(선택사항) ===")]
     [SerializeField] private Selectable titleFirst;   // 타이틀 화면 기본 선택(예: Start 버튼)
     [Header("=== 배경 확대 타겟 ===")]
     [SerializeField] private RectTransform bg; // 풀스크린 배경 이미지(UI)
-     [SerializeField] private Vector2 pivotTL = new(0.35f, 0.7f); // "살짝" 왼쪽 위
     [Header("=== 트윈 설정 ===")]
-    [SerializeField] private float targetScale = 1.15f; // 1 → 1.15로 살짝 확대
+    [SerializeField] private float startScale = 2f;
+    [SerializeField] private float endScale   = 1f;
     [SerializeField] private float zoomDuration = 0.8f;
     [SerializeField] private Ease zoomEase = Ease.InOutQuad;
-    [SerializeField] private CanvasGroup fadeGroup; // 선택: 검은 패널(CanvasGroup, 초기 Alpha=0)
+    [SerializeField] private CanvasGroup fadeGroup; // 선택: 검은 패널(CanvasGroup, 초기 Alpha=1)
     [SerializeField] private float fadeDuration = 0.35f;
     [SerializeField] private float extraHold = 0.1f;
+
+    [Header("Position (수치로 지정)")]
+    [Tooltip("시작시 위로 밀어올릴 픽셀 오프셋(+Y가 위)")]
+    [SerializeField] float startOffsetY = 80f;
+    [Tooltip("필요하면 X도 수치로 조정(좌/우)")]
+    [SerializeField] float startOffsetX = 0f;
+
+    [Tooltip("끝나는 위치(보통 0,0 = 중심)")]
+    [SerializeField] Vector2 endPan = Vector2.zero;
+
     // --- Start ---
     void Start()
     {
         sfx = GetComponent<AudioSource>();
         howPanel.SetActive(false);
         settingPanel.SetActive(false);
-        BackGroundPanel.SetActive(false);
+        MenuBackPanel.SetActive(false);
     }void Awake()
     {
-        if (fadeGroup) fadeGroup.alpha = 0f;
+        // 시작: ‘살짝 위’에서 확대된 상태로 대기
+        bg.localScale = Vector3.one * startScale;
+        bg.anchoredPosition = endPan + new Vector2(startOffsetX, startOffsetY);
         buttonGroup.SetActive(true);
+    }
+    void Update()
+    {
+        // bg.anchoredPosition = endPan + new Vector2(startOffsetX, startOffsetY);
     }
 
     public void OnClickStart()
     {
         if (string.IsNullOrEmpty(gameSceneName) || bg == null) return;
 
-        buttonGroup.SetActive(false);
+        // if (buttonGroup) buttonGroup.SetActive(false);
+        AllButtonDisable();
         DOTween.Kill(bg);
+        DOTween.Kill(fadeGroup);
 
         var seq = DOTween.Sequence().SetUpdate(true).SetLink(gameObject);
 
-        // 1) 좌상단 기준 확대
-        seq.Join(bg.DOScale(targetScale, zoomDuration).SetEase(zoomEase));
+        // 로고 페이드아웃 먼저
+        seq.Append(fadeGroup.DOFade(0f, fadeDuration).SetEase(Ease.OutQuad));
 
-        // 2) (선택) 페이드 겹쳐서
-        if (fadeGroup)
-        {
-            float fadeDelay = Mathf.Max(0f, zoomDuration - fadeDuration * 0.8f);
-            seq.Insert(fadeDelay, fadeGroup.DOFade(1f, fadeDuration));
-        }
+        // 그 다음 줌아웃(스케일 + 포지션 동시)
+        seq.Append(bg.DOScale(endScale, zoomDuration).SetEase(zoomEase));
+        seq.Join(bg.DOAnchorPos(endPan, zoomDuration, true).SetEase(zoomEase));
 
-        // 3) 씬 로드
+        // 마무리
         seq.AppendInterval(extraHold)
-        //    .OnComplete(() => Debug.Log("start!!!!"));
-           .OnComplete(() => SceneManager.LoadScene(gameSceneName));
+           .OnComplete(() =>
+           {
+               bg.localScale = Vector3.one * endScale;
+               bg.anchoredPosition = endPan;
+               SceneManager.LoadScene(gameSceneName);
+           });
     }
-
     // --- How ---
     public void OnClickHow()
     {
@@ -101,29 +119,20 @@ public class TitleManager : MonoBehaviour
                 Application.Quit();
         #endif
     }
+    void AllButtonDisable()
+    {
+        if (buttonGroup == null) return;
 
-    // ===== 내부 유틸 =====
-    // private void OpenPanel(GameObject target, Selectable firstFocus = null)
-    // {
-    //     if (!target) return;
+        Button[] buttons = buttonGroup.GetComponentsInChildren<Button>(true);
+        foreach (Button btn in buttons) btn.enabled = false;
+    }
 
-    //     target.SetActive(true);
-    //     BackGroundPanel.SetActive(true);
-    // }
-
-    // private void ClosePanel(GameObject target, Selectable focusAfterClose = null)
-    // {
-    //     if (!target) return;
-
-    //     target.SetActive(false);
-    //     BackGroundPanel.SetActive(false);
-    // }
     private void PanelOnOff(GameObject target, bool onOff)
     {
         if (!target) return;
         
         target.SetActive(onOff);
-        BackGroundPanel.SetActive(onOff);
+        MenuBackPanel.SetActive(onOff);
     }
 
 }
