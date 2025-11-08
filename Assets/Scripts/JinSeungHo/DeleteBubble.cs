@@ -36,16 +36,16 @@ public class DeleteBubble : MonoBehaviour
     }
 
     // Update is called once per frame
-    //void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Space))
-    //    {
-    //        DeleteUnconnectedBubble();
-    //        Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
-    //    }
-    //}
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DeleteUnconnectedBubble();
+            Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
+        }
+    }
 
-    private void DeleteUnconnectedBubble()
+    public void DeleteUnconnectedBubble()
     {
         // 천장에 연결된 버블들을 모은다.
         List<GameObject> searchTopBubble = FindConnectedToCeiling();
@@ -63,9 +63,12 @@ public class DeleteBubble : MonoBehaviour
         }
 
         // 연결되지 않은 구역과 그 안에 붙어있는 구슬을 식별해 삭제
-        foreach (GameObject areaObj in allAreaObj) {
+        for(int i = 0; i < allAreaObj.Count; i++) {
+            // 모든 사각형 배열을 임시로 담음    
+            GameObject areaObj = allAreaObj[i];
+
             // 이미 연결된 구역이면 건너 뜀
-            if(areaObj == null || connectedSet.Contains(areaObj)) {
+            if (areaObj == null || connectedSet.Contains(areaObj)) {
                 continue;
             }
 
@@ -83,14 +86,32 @@ public class DeleteBubble : MonoBehaviour
                
                 if(bubble != null)
                 {
+                    // 버블을 가지고 있는지 체크를 해제
                     checkflag.isBubbleOn = false;
+                    
+                    // 파괴된 버블이 위치하던 구역 사각형을 null로 처리해줌
+                    for(int j = 0; j < floorNumber; j++)
+                    {
+                        for(int k = 0; k < bubbleFloor[j].Length; k++)
+                        {
+                            // 파괴할 버블이 위치하던 구역사각형을 찾아내면
+                            if(bubbleFloor[j][k] == areaObj)
+                            {
+                                // null 처리후 for문을 빠져나감
+                                bubbleFloor[j][k] = null;
+                                goto EndSearch;     // 처리후 for문 빠져나감
+                            }
+                        }
+                    }
+                    EndSearch:;
+                    // null 처리가 되었다면 bubble 삭제
                     Destroy(bubble.gameObject);
                 }
             }
         }
     }
 
-    public List<GameObject> FindConnectedToCeiling()
+    private List<GameObject> FindConnectedToCeiling()
     {
         connectedBubbles = new List<GameObject>();
         visitedBubbles = new HashSet<GameObject>();
@@ -98,11 +119,14 @@ public class DeleteBubble : MonoBehaviour
         // 최상위 층 (Floor 0)의 모든 구슬이 곧 시작점
         if (floorNumber > 0 && bubbleFloor[0] != null)
         {
-            foreach (GameObject bubble in bubbleFloor[0])
+            foreach (GameObject bubbleArea in bubbleFloor[0])
             {
-                if(bubble != null && !visitedBubbles.Contains(bubble))
+                // 비어있는 구간이 있는 경우 스킵
+                if(bubbleArea == null || bubbleArea.gameObject == null) continue;
+
+                if(!visitedBubbles.Contains(bubbleArea))
                 {
-                    DFS(bubble);
+                    DFS(bubbleArea);
                 }
             }
         }
@@ -111,15 +135,15 @@ public class DeleteBubble : MonoBehaviour
     }
 
     // DFS를 사용하여 현재 구슬과 연결된 모든 구슬을 찾음
-    private void DFS(GameObject currentBubble)
+    private void DFS(GameObject currentArea)
     {
         // 방울이 존재하지 않거나 이미 방문한 방울이라면 return
-        if (currentBubble == null || visitedBubbles.Contains(currentBubble))
+        if (currentArea == null || visitedBubbles.Contains(currentArea))
         {
             return;
-        }
+        }   
 
-        CheckBubble checkflag = currentBubble.GetComponent<CheckBubble>();
+        CheckBubble checkflag = currentArea.GetComponent<CheckBubble>();
 
         if(checkflag == null || !checkflag.isBubbleOn)
         {
@@ -127,10 +151,10 @@ public class DeleteBubble : MonoBehaviour
         }
 
         // 현재 버블을 연결 목록, 방문 목록에 추가
-        connectedBubbles.Add(currentBubble);
-        visitedBubbles.Add(currentBubble);
+        connectedBubbles.Add(currentArea);
+        visitedBubbles.Add(currentArea);
 
-        Vector2 currentPos = currentBubble.transform.position;
+        Vector2 currentPos = currentArea.transform.position;
 
         // 고정된 반지름을 이용해 서치
         float bubbleRadius = 1f;
@@ -145,7 +169,7 @@ public class DeleteBubble : MonoBehaviour
         {
             GameObject neighborBubble = neighborCd.gameObject;
 
-            if (neighborBubble != currentBubble &&
+            if (neighborBubble != currentArea &&
                !visitedBubbles.Contains(neighborBubble))
             {
                 DFS(neighborBubble);
