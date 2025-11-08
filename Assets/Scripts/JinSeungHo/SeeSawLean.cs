@@ -7,9 +7,10 @@ public class SeesawLean : MonoBehaviour
     public GameObject rightBox;
 
     // 기울기 제어 변수 (이전 코드 유지)
-    public float anglePerDiff = 5;
-    public float maxLeanAngle = 20;
-    public float leanSpeed = 1;
+    public float anglePerDiff = 1.2f;
+    public float maxLeanAngle = 12;
+    public float leanSpeed = 100;
+    public float snapThreshold = 0.05f;
 
     private CountInsideBox leftCounting;
     private CountInsideBox rightCounting;
@@ -56,12 +57,5 @@ public class SeesawLean : MonoBehaviour
         //{
         //    Debug.Log("오른쪽에 구슬이 " + (rightCount - leftCount).ToString() + "개 더 많음, 오른쪽으로 기욺");
         //}
-    }
-
-    // 이걸 구슬에 옮겨야 할듯?
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // 부딫히는 물체가 구슬밖에 없다고 가정
-        collision.rigidbody.freezeRotation = true;
     }
 }

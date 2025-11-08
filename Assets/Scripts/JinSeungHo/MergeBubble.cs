@@ -62,5 +62,6 @@ public class MergeBubble : MonoBehaviour
     {
         isCollide = true;
         collidedObj = c;
+        transform.GetComponent<Rigidbody2D>().freezeRotation = true;
     }
 }
