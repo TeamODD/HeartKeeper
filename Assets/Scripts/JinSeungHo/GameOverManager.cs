@@ -1,9 +1,13 @@
 using UnityEngine;
 
 public class GameOverManager : MonoBehaviour
-{
+{   
+    // 왼쪽 오른쪽의 버블 차이를 계산할 목적으로 가져옴
     public GameObject leftBoxArea;
     public GameObject rightBoxArea;
+    // 시소가 기울어 지는 것을 멈추기 위해 가져옴
+    public GameObject seesaw;
+
     public float maxDiff = 10;
     public bool isGameOver = false;
 
@@ -26,7 +30,16 @@ public class GameOverManager : MonoBehaviour
         if(diff >= maxDiff)
         {
             isGameOver = true;
+            seesaw.GetComponent<SeesawLean>().enabled = false;  // 시소의 코드에 의한 기울임을 멈춤
+            seesaw.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;   // 시소가 물리적으로 정지함
+            this.GetComponent<ScatterBubble>().ScatteringBubble();    // 버블의 고정이 풀리고 위로 쓸려감
             Debug.Log("게임 오버");
+
+            // UI를 부름
+            GetComponent<UIManager>().setUI();
+
+            // 게임 오버가 되면 모든게 끝나므로 코드 비활성화
+            this.enabled = false;
         }
     }
 }

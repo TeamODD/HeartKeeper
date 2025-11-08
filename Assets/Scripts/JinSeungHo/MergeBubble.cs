@@ -22,11 +22,11 @@ public class MergeBubble : MonoBehaviour
     private void FixedUpdate()
     {
         if (isCollide) {
-            MergeBeads(collidedObj);
+            MergeBubbles(collidedObj);
         }
     }
 
-    private void MergeBeads(Collision2D c)
+    private void MergeBubbles(Collision2D c)
     {
         if (c == null)
             return;

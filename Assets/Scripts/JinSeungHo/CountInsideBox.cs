@@ -3,6 +3,7 @@ using UnityEngine;
 public class CountInsideBox : MonoBehaviour
 {
     public int currentObjCount = 0;
+    public GameObject deleteBubbleManager;
 
     private void Update()
     {
@@ -13,15 +14,18 @@ public class CountInsideBox : MonoBehaviour
         }
     }
 
-    // 버블 카운트 로직 변경
-    //private void OnTriggerEnter2D(Collider2D collision)
-    //{
-    //    currentObjCount++;
-    //}
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         GetChildCheckBubble();
+        // 버블이 삭제되면 버블이 지워짐을 감지한다는 것을 확인
+        Debug.Log("구역에서 버블이 지워짐/이탈함");
+        // 공중에 떠있는 버블도 추가 삭제 + 삭제가 다음 프레임에 되므로 약간 지연?
+        Invoke("DelayedDelete", 0.1f);
+    }
+
+    private void DelayedDelete()
+    {
+        deleteBubbleManager.GetComponent<DeleteBubble>().DeleteUnconnectedBubble();
     }
 
     public void GetChildCheckBubble()
