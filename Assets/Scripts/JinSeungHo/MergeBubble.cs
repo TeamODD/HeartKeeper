@@ -5,6 +5,9 @@ using UnityEngine;
 public class MergeBubble : MonoBehaviour
 {
     public LayerMask areaLM;
+    public GameObject leftArea;
+    public GameObject rightArea;
+
     private Rigidbody2D rb;
     private Collision2D collidedObj;
 
@@ -54,6 +57,10 @@ public class MergeBubble : MonoBehaviour
         // 위치 고정
         rb.bodyType = RigidbodyType2D.Kinematic;
 
+        // 위치가 고정되었으므로 각 구역의 버블이 추가되도록 함
+        leftArea.GetComponent<CountInsideBox>().GetChildCheckBubble();
+        rightArea.GetComponent<CountInsideBox>().GetChildCheckBubble();
+
         // 이후 구슬 합체는 더이상 진행되지 않으므로, 비활성화
         this.enabled = false;
     }
@@ -62,5 +69,6 @@ public class MergeBubble : MonoBehaviour
     {
         isCollide = true;
         collidedObj = c;
+        transform.GetComponent<Rigidbody2D>().freezeRotation = true;
     }
 }
