@@ -9,6 +9,7 @@ public class BoardManager : MonoBehaviour
     public int totalRows = 6;
     public float bubbleSpacing = 1f;
     public float rowOffset = 0.5f;
+    public float verticalSpacing = 1f;
 
     [Header("시소 참조")]
     public SeesawLean seesaw;
@@ -53,7 +54,6 @@ public class BoardManager : MonoBehaviour
 
         float seesawBottomY = GetSeesawBottomY();
         float startY = seesawBottomY - gapFromSeesaw;
-        float verticalSpacing = bubbleSpacing;
 
         int[] rowGemCounts = new int[] { 13, 12, 0, 10, 0, 8 };
 
@@ -68,7 +68,7 @@ public class BoardManager : MonoBehaviour
                 continue;
             }
 
-            float rowWidth = (bubblesInRow - 1) * bubbleSpacing;
+            float rowWidth = (bubblesInRow - 1f) * bubbleSpacing;
             float startX = -rowWidth / 2f;
 
             for (int col = 0; col < bubblesInRow; col++)
