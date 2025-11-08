@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 1534017500830147238}
   - component: {fileID: 6462684015468784060}
   - component: {fileID: 6334659745951482032}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ball 3
-  m_TagString: Untagged
+  m_TagString: Sticky
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,6 +108,7 @@ MonoBehaviour:
   upWard: {x: 0, y: 0}
   shotClip: {fileID: 8300000, guid: 0c35ffeb7a0313a4ab6607d057d1c47d, type: 3}
   attachedClip: {fileID: 8300000, guid: e15c4abb349ebc94ea4138e4e46ab79c, type: 3}
+  arrow: {fileID: 2560368731711724879}
   launched: 0
   launchSpeed: 0
   maxAimAngle: 60

@@ -12,6 +12,9 @@ TagManager:
   - Floor2
   - Floor3
   - Floor4
+  - OutZone
+  - Ball
+  - ReturnZone
   layers:
   - Default
   - TransparentFX

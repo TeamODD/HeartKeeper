@@ -14,12 +14,15 @@ public class BallController : MonoBehaviour
     private AudioSource sfx;
 
     [Header("발사 속성")]
+    [SerializeField] private GameObject arrow;
     public bool launched=false;
     public float launchSpeed;
     public float maxAimAngle=120;
     public float aimMoveSpeed=40;
 
     private Rigidbody2D rb;
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,13 +38,17 @@ public class BallController : MonoBehaviour
         //한번 발사된 공은 비활성화
         if (launched == true)
         {
-            var t = transform.Find("Arrow"); // 자식 이름이 정확히 "arrow"
-            if (t) t.gameObject.SetActive(false);
+            arrow.SetActive(false);
 
             return;
         }
-        // 와이퍼 움직임
-        transform.rotation = Quaternion.Euler(0f, 0f, GetWiperAngle());
+        else
+        {
+            arrow.SetActive(true);
+            // 와이퍼 움직임
+            transform.rotation = Quaternion.Euler(0f, 0f, GetWiperAngle());
+        }
+        
     }
     
     // 와이퍼처럼 -maxAimAngle ↔ +maxAimAngle 를 왕복하며 각도를 반환
@@ -56,6 +63,7 @@ public class BallController : MonoBehaviour
 
         // -max ↔ +max 로 매핑
         return Mathf.Lerp(-half, half, phase01);
+        
     }
 
     
@@ -69,20 +77,26 @@ public class BallController : MonoBehaviour
         rb.AddForce(transform.up * launchSpeed, ForceMode2D.Impulse);
         launched = true;
     }
-
-    void OnCollisionEnter2D(Collision2D col)
+    public event Action<string, Collider2D> OnHitZone;
+    public event Action<string, Collider2D> OnCollisionBall;
+    // public bool hitHandled = false;
+    // 트리거 방식(권장)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        sfx.PlayOneShot(attachedClip);
-        if (!col.collider.TryGetComponent<BallController>(out var other)) return;
-        // 색이 같을 때
-        if (other.color == color)
-        {
-        }
-        // 다를 때
-        else
-        {
-        }
+        if (other.CompareTag("OutZone")) //Destroy(gameObject);
+            gameObject.SetActive(false); // 성능이슈
+
+        // hitHandled = true;
+        OnHitZone?.Invoke(other.name, other);
     }
+
+    // 충돌 방식 쓰려면 이것도 가능(Zone이 isTrigger=Off일 때)
+    // void OnCollisionEnter2D(Collision2D col)
+    // {
+    //     Debug.Log("충돌체");
+    //     // hitHandled = true;
+    //     OnHitZone?.Invoke(col.collider.name, col.collider);
+    // }
 
 
 }

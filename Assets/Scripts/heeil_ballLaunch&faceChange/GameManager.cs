@@ -31,18 +31,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float ballAppearDuration=0.5f;
 
     [Header("발사 속성")]
+    [SerializeField] private GameObject clickPanel;
     [SerializeField] private GameObject currentBall;
     [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private float maxAimAngle = 120f;
     [SerializeField] private float aimMoveSpeed = 50f;
     [SerializeField] private float launchSpeed = 10;
-    [SerializeField] private float intervalTime = 3f;
+    [SerializeField] private float settingIntervalTime = 3f;
     [SerializeField] private float fireLimitTime = 5f;
     [SerializeField] private int countDown = 3;
-    private float nextSetBallTime = 0f;
+    private float SetBallTime = 0.4f;
     private float nextFireBallTime = 0f;
     [SerializeField]private bool canFire = false;
-    [SerializeField]private bool canSetting = false;
     [SerializeField]private bool canCountDown = false;
 
 
@@ -59,31 +59,47 @@ public class GameManager : MonoBehaviour
 
         SetBall();
     }
+    public void OnClickBackGround()
+    {
+        FireBall();
+    }
     void Update()
     {
         nextFireBallTime += Time.deltaTime;
-        nextSetBallTime += Time.deltaTime;
 
         // 마우스 클릭 (BallControaller.Fire() 호출)
-        bool clicked = Mouse.current != null
-                    && Mouse.current.leftButton.wasPressedThisFrame
-                    && canFire;
-        if (clicked) FireBall();
+        // bool clicked = Mouse.current != null
+        //             && Mouse.current.leftButton.wasPressedThisFrame
+        //             && canFire;
+        // if (clicked) FireBall();
 
+        // 시간이 지났는데 아직도 안눌렀어?
         if (nextFireBallTime > fireLimitTime && canFire == true)
         {
-            FireBall();
-        }
+            oneTurn = false;
+            
 
-        if (nextSetBallTime > intervalTime && canSetting == true)
-        {
-            SetBall();
+            if (canFire == false)
+            {
+                return;
+            }
+
+
+            // 공 충돌 구독해제
+            FireBall();
+            // Invoke("SetBall", settingIntervalTime);
         }
-        if (nextFireBallTime > fireLimitTime-countDown && canCountDown == true)
+        // 응 시간이 지났어
+        
+
+        // 끝나기 ( )초 전이야
+        if (nextFireBallTime > fireLimitTime - countDown && canCountDown == true)
         {
             StartCoroutine(CountDownExact(3));
         }
     }
+
+    public bool oneTurn = false;
     public IEnumerator CountDownExact(int seconds, bool unscaled = false)
     {
         canCountDown = false;
@@ -97,7 +113,7 @@ public class GameManager : MonoBehaviour
             float t = 1f;
             while (t > 0f) // 여기서 1초를 쪼개서 기다림
             {
-                if (canFire == false) // 탈출 조건
+                if (oneTurn == false) // 탈출 조건
                 {
                     countText.text = "";
                     yield break;   // 코루틴 자체 종료
@@ -107,34 +123,81 @@ public class GameManager : MonoBehaviour
                 yield return null;   // 다음 프레임까지 기다림
             }
         }
+        oneTurn = false;
         countText.text = "";
+        // Invoke("SetBall", settingIntervalTime);
     }
 
+    void realizeHandleBallHitZone()=>currentBall.gameObject.GetComponent<BallController>().OnHitZone -= HandleBallHitZone;
+    void HandleBallHitZone(string zoneName, Collider2D zoneCol)
+    {
+        // 중복 방지: 이미 발사 불가 상태면(=세팅 대기) 무시할 수도 있음
 
 
-
+        if (zoneCol.CompareTag("ReturnZone"))
+        {
+            if (oneTurn == false)
+            {
+                Invoke("SetBall", settingIntervalTime);
+                realizeHandleBallHitZone();
+                Debug.Log("구독 해제2");
+                return;
+            }
+            Debug.Log("ReturnZone1");
+            ReturnBall(currentBall);
+            return;
+        }
+        
+        // 여기선 바로 새 공 세팅
+        // 한 턴이 조기종료 된 경우 (다른 공에 맞아서?)
+        // else if (zoneCol.CompareTag("Ball"))
+        // {
+        //     oneTurn = false;
+        //     Debug.Log("공맞음");
+        //     SetBall();
+        //     return;
+        // }
+        
+    }
+    public void ReturnBall(GameObject ball)
+    {
+        
+        if (ball == null || ballSpawnPoint == null) return;
+        ball.transform.position = ballSpawnPoint.position;
+        var rb = ball.GetComponent<Rigidbody2D>();
+        if (rb != null) { rb.linearVelocity = Vector2.zero; rb.angularVelocity = 0f; }
+        // 다시 쏠 수 있게
+        canFire = true;
+        ball.gameObject.GetComponent<BallController>().launched = false;
+    
+    }
 
     public void FireBall()
     {
         currentBall.GetComponent<BallController>().Fire();
-        
-        nextSetBallTime = 0;
         canFire = false;
-        canSetting = true;
     }
+    
     public void SetBall()
     {
+        // 하나의 판(턴)이 시작
+        oneTurn = true;
+
         nextFireBallTime = 0;
         canFire = true;
-        canSetting = false;
         canCountDown = true;
-        
+        // 이전 공 이벤트 구독 해제
+        if(currentBall != null)
+        {
+            realizeHandleBallHitZone();
+            Debug.Log("구독 해제 ");
+        }
+            
         // 1) 공 소환 + 현재색 적용
         currentBall = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation, parent.transform);
         InitBall(currentBall);
         ApplyColorToObject(currentBall, currentColor);
-        
-
+        currentBall.gameObject.GetComponent<BallController>().OnHitZone += HandleBallHitZone;
         ApplySpriteByColorToFace(nextColor);
 
         // 2) 색 파이프라인 밀기 (current ← next, next ← random)
