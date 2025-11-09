@@ -16,6 +16,12 @@ public class TitleManager : MonoBehaviour
     [Header("=== 버튼 참조 ===")]
     [SerializeField] private GameObject buttonGroup;
 
+    [SerializeField] private Button[] buttons;
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button howButton;
+    [SerializeField] private Button settingButton;
+    [SerializeField] private Button quitButton;
+
     [Header("=== 패널 참조 ===")]
     [SerializeField] private GameObject howPanel;
     [SerializeField] private GameObject settingPanel;
@@ -44,9 +50,16 @@ public class TitleManager : MonoBehaviour
     [Tooltip("끝나는 위치(보통 0,0 = 중심)")]
     [SerializeField] Vector2 endPan = Vector2.zero;
 
+    
+
     // --- Start ---
     void Start()
     {
+        startButton = buttonGroup.transform.GetChild(0).GetComponent<Button>();
+        howButton = buttonGroup.transform.GetChild(1).GetComponent<Button>();
+        settingButton = buttonGroup.transform.GetChild(2).GetComponent<Button>();
+        quitButton = buttonGroup.transform.GetChild(3).GetComponent<Button>();
+
         sfx = GetComponent<AudioSource>();
         howPanel.SetActive(false);
         settingPanel.SetActive(false);
@@ -73,7 +86,7 @@ public class TitleManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(gameSceneName) || bg == null) return;
         sfx.PlayOneShot(clickClip);
-        
+
         // if (buttonGroup) buttonGroup.SetActive(false);
         AllButtonDisable();
         DOTween.Kill(bg);
@@ -101,7 +114,6 @@ public class TitleManager : MonoBehaviour
     public void OnClickHow()
     {
         sfx.PlayOneShot(clickClip);
-        
         PanelOnOff(howPanel, true);
         currentPanel = howPanel;
     }
@@ -117,6 +129,8 @@ public class TitleManager : MonoBehaviour
     {
         sfx.PlayOneShot(clickClip);
         PanelOnOff(currentPanel, false);
+        
+        quitButton.GetComponent<HoverGray>().SetNormal();
     }
 
     // --- Quit ---
@@ -162,6 +176,10 @@ public class TitleManager : MonoBehaviour
         
         target.SetActive(onOff);
         MenuBackPanel.SetActive(onOff);
+        startButton.GetComponent<HoverGray>().SetNormal();
+        howButton.GetComponent<HoverGray>().SetNormal();
+        settingButton.GetComponent<HoverGray>().SetNormal();
+        quitButton.GetComponent<HoverGray>().SetNormal();
     }
 
 }
