@@ -8,6 +8,7 @@ public class EscGameStopManager : MonoBehaviour
     public Image fadeBlackImg;
     public Button resumeButton;
     public GameObject gameOverManager;
+    public GameObject panel;
     private bool isStop = false;
     private bool isGameOver = false;
 
@@ -32,6 +33,7 @@ public class EscGameStopManager : MonoBehaviour
             fadeBlackImg.color = c;
 
             resumeButton.gameObject.SetActive(true);
+            panel.SetActive(false);
 
             // 그리고 Esc를 누르면 시간이 흐르게 함
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -49,6 +51,7 @@ public class EscGameStopManager : MonoBehaviour
             fadeBlackImg.color = c;
 
             resumeButton.gameObject.SetActive(false);
+            panel.SetActive(true);
 
             // 그리고 Esc를 누르면 시간이 멈추게 함
             if (Input.GetKeyDown(KeyCode.Escape))
