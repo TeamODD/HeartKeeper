@@ -4,28 +4,28 @@ using TMPro;
 
 public class GameManagerRe : MonoBehaviour
 {
-    [Header("»ö±ò ¼Ó¼º")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½")]
     [SerializeField] private Color[] colors = { Color.red, Color.yellow, Color.green, Color.blue };
     private Color currentColor;
     private Color nextColor;
 
-    [Header("°ø ÀÌ¹ÌÁö ¼Ó¼º")]
-    [SerializeField] private Sprite[] ballSprites;           // colors ¼ø¼­´ë·Î °ø¿¡ »ç¿ëÇÒ ½ºÇÁ¶óÀÌÆ® ¹è¿­
+    [Header("ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½")]
+    [SerializeField] private Sprite[] ballSprites;           // colors ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½è¿­
     [SerializeField] private float ballAppearDuration = 0.5f;
 
-    [Header("ÃÊ»óÈ­ ¼Ó¼º")]
+    [Header("ï¿½Ê»ï¿½È­ ï¿½Ó¼ï¿½")]
     [SerializeField] private GameObject face;
     private SpriteRenderer faceSpriteRenderer;
-    [SerializeField] private Sprite[] faceSprites;           // colors ¼ø¼­´ë·Î ¾ó±¼ ÀÌ¹ÌÁö ½ºÇÁ¶óÀÌÆ® ¹è¿­
+    [SerializeField] private Sprite[] faceSprites;           // colors ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½è¿­
     [SerializeField] private Sprite defaultFaceSprite;
     [SerializeField] private float faceAppearDuration = 1f;
 
-    [Header("¼ÒÈ¯ ¼Ó¼º")]
+    [Header("ï¿½ï¿½È¯ ï¿½Ó¼ï¿½")]
     [SerializeField] private Transform ballSpawnPoint;
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private GameObject parent;
 
-    [Header("¹ß»ç ¼Ó¼º")]
+    [Header("ï¿½ß»ï¿½ ï¿½Ó¼ï¿½")]
     [SerializeField] private GameObject clickPanel;
     [SerializeField] private GameObject currentBall;
     [SerializeField] private TextMeshProUGUI countText;
@@ -111,14 +111,14 @@ public class GameManagerRe : MonoBehaviour
             {
                 Invoke(nameof(SetBall), settingIntervalTime);
                 realizeHandleBallHitZone();
-                Debug.Log("±¸µ¶ ÇØÁ¦2");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½2");
                 return;
             }
             Debug.Log("ReturnZone1");
             ReturnBall(currentBall);
             return;
         }
-        // ÇÊ¿ä½Ã ´Ù¸¥ ±¸¿ª ·ÎÁ÷ Ãß°¡
+        // ï¿½Ê¿ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     }
 
     public void ReturnBall(GameObject ball)
@@ -129,7 +129,7 @@ public class GameManagerRe : MonoBehaviour
         var rb = ball.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
         }
 
@@ -156,7 +156,7 @@ public class GameManagerRe : MonoBehaviour
         if (currentBall != null)
         {
             realizeHandleBallHitZone();
-            Debug.Log("±¸µ¶ ÇØÁ¦ ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ");
         }
 
         currentBall = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation, parent.transform);
@@ -187,7 +187,7 @@ public class GameManagerRe : MonoBehaviour
             }
             if (sprite == null)
             {
-                Debug.LogWarning("¸ÅÄªµÇ´Â °ø ½ºÇÁ¶óÀÌÆ®°¡ ¾ø½À´Ï´Ù. ±âº»°ª »ç¿ë");
+                Debug.LogWarning("ï¿½ï¿½Äªï¿½Ç´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½âº»ï¿½ï¿½ ï¿½ï¿½ï¿½");
                 sprite = ballSprites.Length > 0 ? ballSprites[0] : null;
             }
             sr.sprite = sprite;
