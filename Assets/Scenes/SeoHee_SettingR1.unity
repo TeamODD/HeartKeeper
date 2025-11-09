@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: m_ConnectedAnchor.y
       value: 1.149
       objectReference: {fileID: 0}
+    - target: {fileID: 2739966423803185948, guid: 0f79b5adbaffc9741b829ba6524ffe0e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5996268414408127277, guid: 0f79b5adbaffc9741b829ba6524ffe0e, type: 3}
       propertyPath: m_Name
       value: Bubble_G
@@ -157,7 +161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6334431797734933694, guid: 0f79b5adbaffc9741b829ba6524ffe0e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.149
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 6334431797734933694, guid: 0f79b5adbaffc9741b829ba6524ffe0e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4924,7 +4928,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541818757331208680, guid: a4091e2e864089a43b3eec19b2255df2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.011
+      value: -0.19
       objectReference: {fileID: 0}
     - target: {fileID: 1541818757331208680, guid: a4091e2e864089a43b3eec19b2255df2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4977,6 +4981,10 @@ PrefabInstance:
     - target: {fileID: 4680318571022526531, guid: a4091e2e864089a43b3eec19b2255df2, type: 3}
       propertyPath: m_ConnectedAnchor.y
       value: -0.011
+      objectReference: {fileID: 0}
+    - target: {fileID: 7451147681526951824, guid: a4091e2e864089a43b3eec19b2255df2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11431,7 +11439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1840117004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11439,7 +11447,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1840117003}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26aa76e575275174dbe3eb030bfe58f8, type: 3}
   m_Name: 
@@ -11855,6 +11863,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bubble_Y
       objectReference: {fileID: 0}
+    - target: {fileID: 1644972435591596056, guid: f4c9ed15829dd3640962d6925d604245, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2848059259859408922, guid: f4c9ed15829dd3640962d6925d604245, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.27
@@ -11873,7 +11885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2848059259859408922, guid: f4c9ed15829dd3640962d6925d604245, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.149
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 2848059259859408922, guid: f4c9ed15829dd3640962d6925d604245, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11942,7 +11954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 189592263361316853, guid: 8fc9ffe9ff6d6f243920ed04c6b3d5fd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.011
+      value: -0.21
       objectReference: {fileID: 0}
     - target: {fileID: 189592263361316853, guid: 8fc9ffe9ff6d6f243920ed04c6b3d5fd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11991,6 +12003,10 @@ PrefabInstance:
     - target: {fileID: 3370224030476312925, guid: 8fc9ffe9ff6d6f243920ed04c6b3d5fd, type: 3}
       propertyPath: m_Name
       value: Bubble_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304597268080976216, guid: 8fc9ffe9ff6d6f243920ed04c6b3d5fd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12757,31 +12773,28 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9110053044909009135}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07b453f90d49761489fdf9c0d67058a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
-  currentColor: {r: 0, g: 0, b: 0, a: 0}
-  nextColor: {r: 0, g: 0, b: 0, a: 0}
+  ballSprites:
+  - {fileID: 3254771890420515701, guid: e01a2c8704f2fb94ba0d8f7d955290a6, type: 3}
+  - {fileID: -9080665955833026190, guid: dcb15cce61d49034db6b2716aa5d6d5f, type: 3}
+  - {fileID: -4908159927511389881, guid: 42aa709e31fee4242b2c353db0916793, type: 3}
+  - {fileID: 2161471905971117998, guid: adc238974a0dcef4a883b2fb080f44b1, type: 3}
+  ballAppearDuration: 0.5
   face: {fileID: 6383000235868562304}
-  sprites:
-  - {fileID: 21300000, guid: df590b2416ad81c49a4581a0fa42de81, type: 3}
-  - {fileID: 21300000, guid: 64a56158c6152e64d9ea185aed730e96, type: 3}
+  faceSprites:
   - {fileID: 21300000, guid: 5b7be8b2734f2e941bd7102e0d37f06a, type: 3}
+  - {fileID: 21300000, guid: df590b2416ad81c49a4581a0fa42de81, type: 3}
   - {fileID: 21300000, guid: 32b440828eb02664fb12ee7dc59ad0c2, type: 3}
-  curentSprite: {fileID: 0}
-  defaultSprite: {fileID: 1519886657, guid: 4920134658a7e3946b4be59c5afcb61d, type: 3}
-  faceAppearDuration: 1
+  - {fileID: 21300000, guid: 64a56158c6152e64d9ea185aed730e96, type: 3}
+  defaultFaceSprite: {fileID: 1519886657, guid: 4920134658a7e3946b4be59c5afcb61d, type: 3}
+  faceAppearDuration: 0.5
   ballSpawnPoint: {fileID: 4607378336731840234}
   ballPrefab: {fileID: 207093401161881500, guid: 64db6733ac850594685a6fb5a96987ba, type: 3}
   parent: {fileID: 1563446710062838509}
-  ballAppearDuration: 0.5
   clickPanel: {fileID: 0}
   currentBall: {fileID: 0}
   countText: {fileID: 1784854093}
@@ -12791,9 +12804,6 @@ MonoBehaviour:
   settingIntervalTime: 0.7
   fireLimitTime: 5
   countDown: 3
-  canFire: 0
-  canCountDown: 0
-  oneTurn: 0
 --- !u!4 &218306849753340827
 Transform:
   m_ObjectHideFlags: 0
@@ -13003,7 +13013,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7892717910676549949}
   - component: {fileID: 58077925235325925}
-  - component: {fileID: 9110053044909009136}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -13011,50 +13020,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &9110053044909009136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9110053044909009135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76593fe6a31ace54ab71352cb4b66a1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  colors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
-  ballSprites:
-  - {fileID: 3254771890420515701, guid: e01a2c8704f2fb94ba0d8f7d955290a6, type: 3}
-  - {fileID: -9080665955833026190, guid: dcb15cce61d49034db6b2716aa5d6d5f, type: 3}
-  - {fileID: -4908159927511389881, guid: 42aa709e31fee4242b2c353db0916793, type: 3}
-  - {fileID: 2161471905971117998, guid: adc238974a0dcef4a883b2fb080f44b1, type: 3}
-  ballAppearDuration: 0.5
-  face: {fileID: 6383000235868562304}
-  faceSprites:
-  - {fileID: 21300000, guid: 5b7be8b2734f2e941bd7102e0d37f06a, type: 3}
-  - {fileID: 21300000, guid: df590b2416ad81c49a4581a0fa42de81, type: 3}
-  - {fileID: 21300000, guid: 32b440828eb02664fb12ee7dc59ad0c2, type: 3}
-  - {fileID: 21300000, guid: 64a56158c6152e64d9ea185aed730e96, type: 3}
-  defaultFaceSprite: {fileID: 1519886657, guid: 4920134658a7e3946b4be59c5afcb61d, type: 3}
-  faceAppearDuration: 1
-  ballSpawnPoint: {fileID: 4607378336731840234}
-  ballPrefab: {fileID: 207093401161881500, guid: 64db6733ac850594685a6fb5a96987ba, type: 3}
-  parent: {fileID: 1563446710062838509}
-  clickPanel: {fileID: 0}
-  currentBall: {fileID: 0}
-  countText: {fileID: 1784854093}
-  maxAimAngle: 60
-  aimMoveSpeed: 50
-  launchSpeed: 10
-  settingIntervalTime: 0.7
-  fireLimitTime: 5
-  countDown: 3
-  oneTurn: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
