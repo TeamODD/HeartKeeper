@@ -20,6 +20,8 @@ public class BoardManager : MonoBehaviour
     public List<List<Gem>> allGems = new List<List<Gem>>();
     private bool isInitialBoard = true;
 
+    public GameObject bubble;
+
     void Awake()
     {
         RemoveSceneGems();
@@ -30,6 +32,20 @@ public class BoardManager : MonoBehaviour
         SetupHexBoard();
         isInitialBoard = false;
     }
+
+    //private void FixedUpdate()
+    //{
+    //    GameObject curBubble = bubble.transform.GetChild(0).gameObject;
+    //    if (curBubble != null)
+    //    {
+    //        Invoke("DelayTime", 0.5f);
+    //        OnGemAttached(curBubble);
+    //    }
+    //}
+    //private void DelayTime()
+    //{
+
+    //}
 
     void RemoveSceneGems()
     {

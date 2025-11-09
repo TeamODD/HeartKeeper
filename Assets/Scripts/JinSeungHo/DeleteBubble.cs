@@ -39,14 +39,14 @@ public class DeleteBubble : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            DeleteUnconnectedBubble();
-            Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
-        }
-    }
+    //void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        DeleteUnconnectedBubble();
+    //        Debug.Log("스페이스바가 눌렸습니다. 버블을 지웁니다.");
+    //    }
+    //}
 
     public void DeleteUnconnectedBubble()
     {
