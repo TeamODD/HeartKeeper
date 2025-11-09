@@ -12,15 +12,16 @@ public class MergeBubble : MonoBehaviour
     private Rigidbody2D rb;
     private Collision2D collidedObj;
 
-    private bool isCollide;
-    public float waitTime = 0.5f;
+    public bool isCollide;
+    // private bool canFire = false;
+    public float waitTime = 3.1f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         collidedObj = null;   isCollide = false;
 
-        // 시작한지 0.5초 뒤에 모든 구슬의 고정을 풀고 머지 버블을 한번 호출함
+        // 시작한지 waitTime초 뒤에 모든 구슬의 고정을 풀고 머지 버블을 한번 호출함
         StartCoroutine(Wait(waitTime));
     }
 
@@ -60,7 +61,7 @@ public class MergeBubble : MonoBehaviour
         overlappingAreas[0].GetComponent<CheckBubble>().isBubbleOn = true;
 
         // 위치 고정
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Static;
 
         // 위치가 고정되었으므로 각 구역의 버블이 추가되도록 함
         leftArea.GetComponent<CountInsideBox>().GetChildCheckBubble();
@@ -77,6 +78,9 @@ public class MergeBubble : MonoBehaviour
         // 충돌 감지
         // Debug.Log("충돌 감지 : " + c.gameObject.name + " 와 충돌함");
         transform.GetComponent<Rigidbody2D>().freezeRotation = true;
+        //if (c.gameObject.tag == "Sticky" && canFire)
+        //{
+        //}
     }
 
     IEnumerator Wait(float wTime)
@@ -91,9 +95,13 @@ public class MergeBubble : MonoBehaviour
 
         // 구슬을 고정하는 fj를 비활성화 한다.
         FixedJoint2D fj = this.GetComponent<FixedJoint2D>();
-        fj.enabled = false;
+        if(fj != null)
+        {
+            fj.enabled = false;
+        }
 
         // 리지드 바디의 bodyType을 kinetic에서 dynamic으로 바꾼다.
         rb.bodyType = RigidbodyType2D.Dynamic;
+        // canFire = true;
     }
 }

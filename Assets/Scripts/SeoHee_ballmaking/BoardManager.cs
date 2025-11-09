@@ -5,7 +5,6 @@ using System.Linq;
 public class BoardManager : MonoBehaviour
 {
     [Header("보드 설정")]
-    public int topRowCount = 13;
     public int totalRows = 6;
     public float bubbleSpacing = 1f;
     public float rowOffset = 0.5f;
@@ -38,13 +37,11 @@ public class BoardManager : MonoBehaviour
         {
             Gem gem = child.GetComponent<Gem>();
             if (gem != null)
-            {
 #if UNITY_EDITOR
                 DestroyImmediate(child.gameObject);
 #else
                 Destroy(child.gameObject);
 #endif
-            }
         }
     }
 
@@ -77,7 +74,7 @@ public class BoardManager : MonoBehaviour
                 float posY = startY - row * verticalSpacing;
                 Vector3 spawnPos = new Vector3(posX, posY, 0f);
 
-                // 구슬 타입 중복 연속 3개 방지 로직
+                // 구슬 타입 중복 3개 방지
                 int prefabIndex = 0;
                 GemType candidateType;
                 while (true)
@@ -85,11 +82,8 @@ public class BoardManager : MonoBehaviour
                     prefabIndex = Random.Range(0, gemPrefabs.Length);
                     GameObject prefab = gemPrefabs[prefabIndex];
                     Gem prefabGem = prefab.GetComponent<Gem>();
-                    if (prefabGem == null)
-                    {
-                        Debug.LogError("gemPrefabs[" + prefabIndex + "]에 Gem 컴포넌트가 없습니다.");
-                        continue;
-                    }
+                    if (prefabGem == null) continue;
+
                     candidateType = prefabGem.gemType;
 
                     if (col > 1 &&
@@ -98,7 +92,6 @@ public class BoardManager : MonoBehaviour
                         gemRow[col - 1].gemType == candidateType &&
                         gemRow[col - 2].gemType == candidateType)
                     {
-                        // 바로 앞 두 구슬과 같은 타입이면 다시 뽑기
                         continue;
                     }
                     break;
@@ -108,11 +101,6 @@ public class BoardManager : MonoBehaviour
                 gemObj.transform.parent = transform;
 
                 Gem newGem = gemObj.GetComponent<Gem>();
-                if (newGem == null)
-                {
-                    Debug.LogError("생성된 구슬에 Gem 컴포넌트가 없습니다.");
-                    continue;
-                }
                 gemRow.Add(newGem);
 
                 Rigidbody2D rb = gemObj.GetComponent<Rigidbody2D>();
@@ -130,11 +118,7 @@ public class BoardManager : MonoBehaviour
 
     float GetSeesawBottomY()
     {
-        if (seesaw == null)
-        {
-            Debug.LogWarning("SeesawLean이 연결되지 않았습니다. 기본값 Y=0 사용");
-            return 0f;
-        }
+        if (seesaw == null) return 0f;
 
         Collider2D col = seesaw.GetComponent<Collider2D>();
         if (col != null) return col.bounds.min.y;
@@ -145,33 +129,28 @@ public class BoardManager : MonoBehaviour
         return seesaw.transform.position.y;
     }
 
+    // --------------------- 여기부터 3개 이상 그룹 삭제 ---------------------
     public void CheckMatches()
     {
         if (isInitialBoard) return;
 
-        List<Gem> gemsToDestroy = new List<Gem>();
+        HashSet<Gem> gemsToDestroy = new HashSet<Gem>();
+        bool[,] visited = new bool[allGems.Count, allGems.Max(r => r.Count)];
 
-        for (int i = 0; i < allGems.Count; i++)
+        for (int row = 0; row < allGems.Count; row++)
         {
-            for (int j = 0; j < allGems[i].Count; j++)
+            for (int col = 0; col < allGems[row].Count; col++)
             {
-                Gem current = allGems[i][j];
-                if (current == null) continue;
+                if (allGems[row][col] == null || visited[row, col]) continue;
 
-                if (j > 1 &&
-                    allGems[i][j - 1] != null &&
-                    allGems[i][j - 2] != null &&
-                    allGems[i][j - 1].gemType == current.gemType &&
-                    allGems[i][j - 2].gemType == current.gemType)
+                List<Vector2Int> group = GetConnectedGroup(row, col, allGems[row][col].gemType, visited);
+                if (group.Count >= 3)
                 {
-                    gemsToDestroy.Add(current);
-                    gemsToDestroy.Add(allGems[i][j - 1]);
-                    gemsToDestroy.Add(allGems[i][j - 2]);
+                    foreach (var pos in group)
+                        gemsToDestroy.Add(allGems[pos.x][pos.y]);
                 }
             }
         }
-
-        gemsToDestroy = new HashSet<Gem>(gemsToDestroy).ToList();
 
         foreach (var gem in gemsToDestroy)
         {
@@ -180,5 +159,48 @@ public class BoardManager : MonoBehaviour
                 Destroy(gem.gameObject);
             }
         }
+    }
+
+    // BFS/DFS로 연결된 같은 색 구슬 그룹 찾기
+    List<Vector2Int> GetConnectedGroup(int startRow, int startCol, GemType type, bool[,] visited)
+    {
+        List<Vector2Int> group = new List<Vector2Int>();
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        queue.Enqueue(new Vector2Int(startRow, startCol));
+        visited[startRow, startCol] = true;
+
+        int[][] directionsEven = new int[][]
+        {
+            new int[]{0,1}, new int[]{1,0}, new int[]{1,-1}, new int[]{0,-1}, new int[]{-1,-1}, new int[]{-1,0}
+        };
+        int[][] directionsOdd = new int[][]
+        {
+            new int[]{0,1}, new int[]{1,1}, new int[]{1,0}, new int[]{0,-1}, new int[]{-1,0}, new int[]{-1,1}
+        };
+
+        while (queue.Count > 0)
+        {
+            Vector2Int pos = queue.Dequeue();
+            group.Add(pos);
+
+            int[][] dirs = (pos.x % 2 == 0) ? directionsEven : directionsOdd;
+
+            foreach (var dir in dirs)
+            {
+                int newRow = pos.x + dir[0];
+                int newCol = pos.y + dir[1];
+
+                if (newRow < 0 || newRow >= allGems.Count) continue;
+                if (newCol < 0 || newCol >= allGems[newRow].Count) continue;
+                if (visited[newRow, newCol]) continue;
+                if (allGems[newRow][newCol] == null) continue;
+                if (allGems[newRow][newCol].gemType != type) continue;
+
+                visited[newRow, newCol] = true;
+                queue.Enqueue(new Vector2Int(newRow, newCol));
+            }
+        }
+
+        return group;
     }
 }

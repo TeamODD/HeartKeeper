@@ -98,8 +98,8 @@ public class VignetteManager : MonoBehaviour
         }
 
         // 임시로 
-        Debug.Log("마지막층 버블 개수 = " + lastFloorBubbleCount);
-        Debug.Log("마지막에서 두번째 층 버블 개수 = " + secondToLastFloorBubbleCount);
+        // Debug.Log("마지막층 버블 개수 = " + lastFloorBubbleCount);
+        // Debug.Log("마지막에서 두번째 층 버블 개수 = " + secondToLastFloorBubbleCount);
 
         // 8층 9층 둘다 버블이 없으면 원래의 로직으로 진행
         if (lastFloorBubbleCount == 0 && secondToLastFloorBubbleCount == 0)
