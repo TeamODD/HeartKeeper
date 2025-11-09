@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     private bool canFire = false;
     private bool canCountDown = false;
     private bool oneTurn = false;
+    
 
     void Start()
     {
@@ -117,7 +119,7 @@ public class GameManager : MonoBehaviour
 
     // 🔹 충돌 처리 (BallController에서 OnHitZone 이벤트로 호출)
     void HandleBallHitZone(string zoneName, Collider2D zoneCol)
-    {
+    {   
         if (zoneCol.CompareTag("Ball"))
         {
             Debug.Log("🎯 공에 충돌 — 다음 공 준비");
@@ -162,6 +164,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        // 1. 모든 타이머 리셋 발사 중단
+        nextFireBallTime = 0;
+        canCountDown = false;
+        StopAllCoroutines();
+
         var bc = currentBall.GetComponent<BallController>();
         if (bc == null)
         {
@@ -172,6 +179,8 @@ public class GameManager : MonoBehaviour
         bc.Fire();
         canFire = false;
         Debug.Log("💥 공 발사!");
+
+        StartCoroutine(ReloadAfterDelay(fireLimitTime));
     }
 
     // 🔹 새 공 세팅
@@ -247,5 +256,15 @@ public class GameManager : MonoBehaviour
             bc.aimMoveSpeed = aimMoveSpeed;
             bc.launchSpeed = launchSpeed;
         }
+    }
+
+    public IEnumerator ReloadAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        oneTurn = false;
+        UnsubscribeBallEvent();
+
+        SetBall();
     }
 }
