@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
     public Image fadeBlack;
     public Button mainButton;
     public Button restartButton;
+    // resume 버튼은 EscGameStopManager에서 SetActive 여부를 결정함, 여기서는 false로 초기화
+    public Button resumeButton;
 
     // 게임 오버시에 얼마나 검게 페이드할 것인지 정하는 변수, (0 ~ 1)
     public float fadeoutAmount = 0.5f;
@@ -22,8 +24,13 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // 게임 시작시 UI 숨김
-        canvasObj.SetActive(false);
+        //// 게임 시작시 UI 숨김
+        //canvasObj.SetActive(false);
+        // fadeBlack 이미지를 제외하고 전부 비활성화
+        gameOverTextImg.gameObject.SetActive(false);
+        mainButton.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+        resumeButton.gameObject.SetActive(false);
     }
 
     // 호출시 UI를 전부 보여주고, 활성화함
@@ -86,14 +93,10 @@ public class UIManager : MonoBehaviour
 
     IEnumerator GameOverUIAppear()
     {
-        // 그 이후에 UI를 활성화
-        // UI 활성화
-        canvasObj.SetActive(true);
-
-        // fadeBlack 이미지를 제외하고 전부 비활성화
-        gameOverTextImg.gameObject.SetActive(false);
-        mainButton.gameObject.SetActive(false);
-        restartButton.gameObject.SetActive(false);
+        // 원래부터 UI가 활성화 된 상태로 하고, fadeBlack을 제외한 나머지 것들이 비활성화 되도록 함
+        //// 그 이후에 UI를 활성화
+        //// UI 활성화
+        //canvasObj.SetActive(true);
 
         // 페이드 아웃 실행
         yield return StartCoroutine(Fade(0, fadeoutAmount));
