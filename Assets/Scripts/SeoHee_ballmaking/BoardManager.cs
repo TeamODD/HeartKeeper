@@ -17,7 +17,7 @@ public class BoardManager : MonoBehaviour
     [Header("구슬 프리팹")]
     public GameObject[] gemPrefabs;
 
-    private List<List<Gem>> allGems = new List<List<Gem>>();
+    public List<List<Gem>> allGems = new List<List<Gem>>();
     private bool isInitialBoard = true;
 
     void Awake()
@@ -37,11 +37,13 @@ public class BoardManager : MonoBehaviour
         {
             Gem gem = child.GetComponent<Gem>();
             if (gem != null)
+            {
 #if UNITY_EDITOR
                 DestroyImmediate(child.gameObject);
 #else
                 Destroy(child.gameObject);
 #endif
+            }
         }
     }
 
@@ -74,29 +76,7 @@ public class BoardManager : MonoBehaviour
                 float posY = startY - row * verticalSpacing;
                 Vector3 spawnPos = new Vector3(posX, posY, 0f);
 
-                // 구슬 타입 중복 3개 방지
-                int prefabIndex = 0;
-                GemType candidateType;
-                while (true)
-                {
-                    prefabIndex = Random.Range(0, gemPrefabs.Length);
-                    GameObject prefab = gemPrefabs[prefabIndex];
-                    Gem prefabGem = prefab.GetComponent<Gem>();
-                    if (prefabGem == null) continue;
-
-                    candidateType = prefabGem.gemType;
-
-                    if (col > 1 &&
-                        gemRow[col - 1] != null &&
-                        gemRow[col - 2] != null &&
-                        gemRow[col - 1].gemType == candidateType &&
-                        gemRow[col - 2].gemType == candidateType)
-                    {
-                        continue;
-                    }
-                    break;
-                }
-
+                int prefabIndex = Random.Range(0, gemPrefabs.Length);
                 GameObject gemObj = Instantiate(gemPrefabs[prefabIndex], spawnPos, Quaternion.identity);
                 gemObj.transform.parent = transform;
 
@@ -112,8 +92,6 @@ public class BoardManager : MonoBehaviour
 
             allGems.Add(gemRow);
         }
-
-        CheckMatches();
     }
 
     float GetSeesawBottomY()
@@ -129,39 +107,53 @@ public class BoardManager : MonoBehaviour
         return seesaw.transform.position.y;
     }
 
-    // --------------------- 여기부터 3개 이상 그룹 삭제 ---------------------
-    public void CheckMatches()
+    // 발사된 구슬이 보드에 붙을 때 호출
+    public void RegisterGemAt(int row, int col, Gem gem)
+    {
+        Debug.Log($"[등록] 구슬 등록됨: ({row}, {col}) 타입: {gem.gemType}");
+
+        while (allGems.Count <= row)
+            allGems.Add(new List<Gem>());
+
+        while (allGems[row].Count <= col)
+            allGems[row].Add(null);
+
+        allGems[row][col] = gem;
+
+        CheckMatchesFromGem(row, col);
+    }
+
+    public void CheckMatchesFromGem(int startRow, int startCol)
     {
         if (isInitialBoard) return;
+        if (allGems[startRow][startCol] == null) return;
 
-        HashSet<Gem> gemsToDestroy = new HashSet<Gem>();
+        GemType type = allGems[startRow][startCol].gemType;
         bool[,] visited = new bool[allGems.Count, allGems.Max(r => r.Count)];
+        List<Vector2Int> group = GetConnectedGroup(startRow, startCol, type, visited);
 
-        for (int row = 0; row < allGems.Count; row++)
+        Debug.Log($"[검사] 연결된 그룹 크기: {group.Count}");
+
+        if (group.Count >= 3)
         {
-            for (int col = 0; col < allGems[row].Count; col++)
+            foreach (var pos in group)
             {
-                if (allGems[row][col] == null || visited[row, col]) continue;
-
-                List<Vector2Int> group = GetConnectedGroup(row, col, allGems[row][col].gemType, visited);
-                if (group.Count >= 3)
+                Gem gem = allGems[pos.x][pos.y];
+                if (gem != null)
                 {
-                    foreach (var pos in group)
-                        gemsToDestroy.Add(allGems[pos.x][pos.y]);
+                    Debug.Log($"[삭제] 구슬 제거됨: ({pos.x}, {pos.y}) 타입: {gem.gemType}");
+                    allGems[pos.x][pos.y] = null;
+#if UNITY_EDITOR
+                    DestroyImmediate(gem.gameObject);
+#else
+                    Destroy(gem.gameObject);
+#endif
                 }
-            }
-        }
-
-        foreach (var gem in gemsToDestroy)
-        {
-            if (gem != null)
-            {
-                Destroy(gem.gameObject);
             }
         }
     }
 
-    // BFS/DFS로 연결된 같은 색 구슬 그룹 찾기
+    // 전방향 탐색 (8방향)
     List<Vector2Int> GetConnectedGroup(int startRow, int startCol, GemType type, bool[,] visited)
     {
         List<Vector2Int> group = new List<Vector2Int>();
@@ -169,13 +161,12 @@ public class BoardManager : MonoBehaviour
         queue.Enqueue(new Vector2Int(startRow, startCol));
         visited[startRow, startCol] = true;
 
-        int[][] directionsEven = new int[][]
+        int[][] directions = new int[][]
         {
-            new int[]{0,1}, new int[]{1,0}, new int[]{1,-1}, new int[]{0,-1}, new int[]{-1,-1}, new int[]{-1,0}
-        };
-        int[][] directionsOdd = new int[][]
-        {
-            new int[]{0,1}, new int[]{1,1}, new int[]{1,0}, new int[]{0,-1}, new int[]{-1,0}, new int[]{-1,1}
+            new int[]{-1, 0}, new int[]{1, 0},
+            new int[]{0, -1}, new int[]{0, 1},
+            new int[]{-1, -1}, new int[]{-1, 1},
+            new int[]{1, -1}, new int[]{1, 1}
         };
 
         while (queue.Count > 0)
@@ -183,9 +174,7 @@ public class BoardManager : MonoBehaviour
             Vector2Int pos = queue.Dequeue();
             group.Add(pos);
 
-            int[][] dirs = (pos.x % 2 == 0) ? directionsEven : directionsOdd;
-
-            foreach (var dir in dirs)
+            foreach (var dir in directions)
             {
                 int newRow = pos.x + dir[0];
                 int newCol = pos.y + dir[1];
