@@ -43,7 +43,8 @@ public class MergeBubble : MonoBehaviour
 
         // 구슬의 반지름 크기로 구역 감지
         CircleCollider2D circleCd = GetComponent<CircleCollider2D>();
-        float radius = circleCd.radius * transform.lossyScale.x;
+        float radius = (circleCd.radius) * transform.lossyScale.x;
+        Debug.Log("부착된 구슬 반지름 : " + radius);
 
         // 현재 위치의 겹치는 areaLM의 레이어를 가지는 구역 검사
         Collider2D[] overlappingAreas = Physics2D.OverlapCircleAll(checkPosition, radius, areaLM);

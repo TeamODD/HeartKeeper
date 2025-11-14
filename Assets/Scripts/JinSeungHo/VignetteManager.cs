@@ -17,10 +17,13 @@ public class VignetteManager : MonoBehaviour
     private float currentIntensity;     // 현재 비네트 강도
     private float targetIntensity;      // 목표 비네트 강도
     public float changeSpeed = 1;       // 비네트 변화 속도
-    private float intensityPerBubble;         // 버블 하나당 변화될 비네트 강도
+    public float intensityPerBubble;         // 버블 하나당 변화될 비네트 강도(퍼센티지)
     [Header("비네트가 시작하는 최소 조건, 비네트가 최대로 변할 조건")]
     public int maxDiffBubble;
     public int minDiffBubble;
+
+    // 8층에 버블이 붙었는지 유무
+    public bool is8thHasBubble = false;
     
     // 층별 감지 박스를 저장할 리스트 변수
     private GameObject[][] detectBox;
@@ -108,6 +111,8 @@ public class VignetteManager : MonoBehaviour
         // 8층 9층 둘다 버블이 없으면 원래의 로직으로 진행
         if (lastFloorBubbleCount == 0 && secondToLastFloorBubbleCount == 0)
         {
+            // 8층에 버블이 없으므로 false
+            is8thHasBubble = false;
             // 버블 차이수가 최대치와 같거나 그 이상이면 비네트 세기를 최대치 값으로 고정
             if (diff >= maxDiffBubble)
             {
@@ -132,6 +137,9 @@ public class VignetteManager : MonoBehaviour
         // 만약 8층(floor7, 즉 detectBox[1]이 가지고 있는 박스들)에 버블이 하나라도 있다면 바로 비네트 세기를 최대치로 조정
         if (secondToLastFloorBubbleCount > 0)
         {
+            // 비네트 적용 외에 경고 소리 또한 들려야 하므로, bool값을 true로 적용
+            // 이 값은 이 매니저의 자식인 WarningSoundManager에서 참조
+            is8thHasBubble = true;
             targetIntensity = maxIntensity;
             currentIntensity = Mathf.Lerp(currentIntensity, targetIntensity, Time.deltaTime * changeSpeed);
             vig.intensity.value = currentIntensity;     // 비네트 세기 적용
