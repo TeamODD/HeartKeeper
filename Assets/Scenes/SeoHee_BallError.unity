@@ -14392,6 +14392,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 136d2caccd61d2445a0d6770dfcbdabe, type: 3}
+--- !u!1 &1625597017
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625597018}
+  - component: {fileID: 1625597019}
+  m_Layer: 0
+  m_Name: GamEffectSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1625597018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625597017}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1625597019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625597017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bee49d48f1aac94bb0acadfe1876149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  splashEffectRed: {fileID: 1241173730452920846, guid: 65ee8860af17fa04a9eae8f6c15f9104, type: 3}
+  splashEffectBlue: {fileID: 5282453444476948835, guid: 7fd217a06fbc7de46bc7e0c025456624, type: 3}
+  splashEffectYellow: {fileID: 6616441077846912616, guid: ed09d9105d97e324f8a274eb7699b808, type: 3}
+  splashEffectGreen: {fileID: 8897948983026209035, guid: 43cb48cbd411c384c9f62d293dfa17be, type: 3}
 --- !u!1001 &1626648319
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18926,6 +18974,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1842535668}
+  - {fileID: 1625597018}
   - {fileID: 2121063885}
   - {fileID: 178620119}
   - {fileID: 9168487914486196810}

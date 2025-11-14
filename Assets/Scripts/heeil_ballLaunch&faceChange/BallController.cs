@@ -11,8 +11,8 @@ public class BallController : MonoBehaviour
     [SerializeField] private Vector2 upWard;
 
     [Header("효광음 속성")]
-    [SerializeField] private AudioClip shotClip;     // 발사음
-    [SerializeField] private AudioClip attachedClip; // 충돌음
+    [SerializeField] private AudioClip shotClip;
+    [SerializeField] private AudioClip attachedClip;
     private AudioSource sfx;
 
     [Header("발사 속성")]
@@ -139,8 +139,6 @@ public class BallController : MonoBehaviour
             {
                 Gem neighbor = hit.GetComponent<Gem>();
                 if (neighbor == null || visited.Contains(neighbor)) continue;
-
-                // ✅ 같은 색깔만 연결로 인정
                 if (neighbor.gemType != selfGem.gemType) continue;
 
                 float dist = Vector2.Distance(current.transform.position, neighbor.transform.position);
@@ -157,8 +155,11 @@ public class BallController : MonoBehaviour
             Debug.Log($"💥 연결된 같은 색 구슬 {group.Count}개 → 삭제");
 
             var board = FindObjectOfType<BoardManager>();
+            var effectSpawner = FindObjectOfType<GemEffectSpawner>();
+
             foreach (var gem in group)
             {
+                effectSpawner?.SpawnEffect(gem.gemType, gem.transform.position);
                 board?.RemoveGem(gem);
                 Destroy(gem.gameObject);
             }
