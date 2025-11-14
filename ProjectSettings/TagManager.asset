@@ -19,11 +19,12 @@ TagManager:
   - Floor6
   - Floor7
   - Floor8
+  - Bubble
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - GemLayer
   - Water
   - UI
   - BoxArea

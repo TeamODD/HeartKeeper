@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6462684015468784060}
   - component: {fileID: 6334659745951482032}
   - component: {fileID: 2023169291669817410}
+  - component: {fileID: 6662887425659159180}
   m_Layer: 7
   m_Name: Ball 3
   m_TagString: Sticky
@@ -291,7 +292,21 @@ MonoBehaviour:
     m_Bits: 64
   leftArea: {fileID: 0}
   rightArea: {fileID: 0}
+  isCollide: 0
   waitTime: 0.5
+--- !u!114 &6662887425659159180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207093401161881500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c5467b3450f24478fba2ffc782c105, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gemType: 0
 --- !u!1 &2560368731711724879
 GameObject:
   m_ObjectHideFlags: 0

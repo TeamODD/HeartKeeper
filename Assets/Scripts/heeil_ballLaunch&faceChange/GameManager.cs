@@ -1,20 +1,19 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     [Header("공 이미지 속성")]
-    [SerializeField] private Sprite[] ballSprites;     // 공의 스프라이트 배열
+    [SerializeField] private Sprite[] ballSprites;
     [SerializeField] private float ballAppearDuration = 0.5f;
 
     [Header("초상화 속성")]
-    [SerializeField] private GameObject face;          // face 오브젝트 (SpriteRenderer 있음)
+    [SerializeField] private GameObject face;
     private SpriteRenderer faceSpriteRenderer;
-    [SerializeField] private Sprite[] faceSprites;     // 얼굴용 스프라이트 배열
+    [SerializeField] private Sprite[] faceSprites;
     [SerializeField] private Sprite defaultFaceSprite;
     [SerializeField] private float faceAppearDuration = 1f;
 
@@ -31,7 +30,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float aimMoveSpeed = 50f;
     [SerializeField] private float launchSpeed = 10f;
     [SerializeField] private float settingIntervalTime = 1.0f;
-    [SerializeField] private float fireLimitTime = 3f;   // 3초 동안 입력 없으면 자동 발사
+    [SerializeField] private float fireLimitTime = 3f;
     [SerializeField] private int countDown = 3;
 
     private int currentIndex;
@@ -41,7 +40,8 @@ public class GameManager : MonoBehaviour
     private bool canFire = false;
     private bool canCountDown = false;
     private bool oneTurn = false;
-    
+
+    private List<GameObject> attachedBalls = new List<GameObject>();
 
     void Start()
     {
@@ -61,21 +61,18 @@ public class GameManager : MonoBehaviour
 
         nextFireBallTime += Time.deltaTime;
 
-        // 3초 동안 아무 입력 없으면 자동 발사
         if (nextFireBallTime > fireLimitTime)
         {
             Debug.Log("⏱ 자동 발사됨!");
             FireBall();
         }
 
-        // 발사 전 카운트다운 표시
         if (nextFireBallTime > fireLimitTime - countDown && canCountDown)
         {
             StartCoroutine(CountDownExact(countDown));
         }
     }
 
-    // 클릭 시 즉시 발사
     public void OnClickBackGround()
     {
         if (canFire && currentBall != null)
@@ -106,7 +103,6 @@ public class GameManager : MonoBehaviour
         countText.text = "";
     }
 
-    // 🔹 이벤트 구독 해제 함수
     void UnsubscribeBallEvent()
     {
         if (currentBall != null)
@@ -117,11 +113,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 🔹 충돌 처리 (BallController에서 OnHitZone 이벤트로 호출)
     void HandleBallHitZone(string zoneName, Collider2D zoneCol)
-    {   
+    {
         if (zoneCol.CompareTag("Ball"))
         {
+            if (!attachedBalls.Contains(currentBall))
+            {
+                attachedBalls.Add(currentBall);
+
+                var gem = currentBall.GetComponent<Gem>();
+                string colorInfo = gem != null ? gem.gemType.ToString() : "Unknown";
+                Vector3 pos = currentBall.transform.position;
+
+                Debug.Log($"📌 고정된 공 등록됨 — 위치({pos.x:F2}, {pos.y:F2}), 색상={colorInfo}, 총 개수: {attachedBalls.Count}");
+            }
+
             Debug.Log("🎯 공에 충돌 — 다음 공 준비");
             oneTurn = false;
             UnsubscribeBallEvent();
@@ -137,7 +143,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 🔹 공 되돌리기
     public void ReturnBall(GameObject ball)
     {
         if (ball == null || ballSpawnPoint == null) return;
@@ -155,9 +160,6 @@ public class GameManager : MonoBehaviour
         ball.GetComponent<BallController>().launched = false;
     }
 
-    // 🔹 공 발사
-
-    public GameObject pairy;
     public void FireBall()
     {
         if (currentBall == null)
@@ -166,7 +168,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // 1. 모든 타이머 리셋 발사 중단
         nextFireBallTime = 0;
         canCountDown = false;
         StopAllCoroutines();
@@ -181,12 +182,10 @@ public class GameManager : MonoBehaviour
         bc.Fire();
         canFire = false;
         Debug.Log("💥 공 발사!");
-        // pairy.gameObject.GetComponent<FairyTiltMotion>();
 
         StartCoroutine(ReloadAfterDelay(fireLimitTime));
     }
 
-    // 🔹 새 공 세팅
     public void SetBall()
     {
         oneTurn = true;
@@ -202,7 +201,20 @@ public class GameManager : MonoBehaviour
 
         currentBall = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation, parent.transform);
         InitBall(currentBall);
-        ApplySpriteToBall(currentBall, ballSprites[currentIndex]);
+
+        Sprite selectedSprite = ballSprites[currentIndex];
+        ApplySpriteToBall(currentBall, selectedSprite);
+
+        var gem = currentBall.GetComponent<Gem>();
+        if (gem != null)
+        {
+            gem.gemType = GetGemTypeFromSprite(selectedSprite);
+            Debug.Log($"🎨 GemType 설정됨: {gem.gemType} (이미지: {selectedSprite.name})");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ Gem 컴포넌트를 찾을 수 없습니다 — 색상 설정 실패");
+        }
 
         var bc = currentBall.GetComponent<BallController>();
         bc.OnHitZone += HandleBallHitZone;
@@ -213,7 +225,20 @@ public class GameManager : MonoBehaviour
         nextIndex = Random.Range(0, ballSprites.Length);
     }
 
-    // 🔹 공에 이미지 적용
+    public GemType GetGemTypeFromSprite(Sprite sprite)
+    {
+        if (sprite == null) return GemType.Red;
+
+        string name = sprite.name.ToLower();
+
+        if (name.Contains("surpris")) return GemType.Green;
+        if (name.Contains("angry")) return GemType.Red;
+        if (name.Contains("sad")) return GemType.Blue;
+        if (name.Contains("happy")) return GemType.Yellow;
+
+        return GemType.Red;
+    }
+
     public void ApplySpriteToBall(GameObject ball, Sprite sprite)
     {
         if (ball.TryGetComponent<SpriteRenderer>(out var sr))
@@ -223,7 +248,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 🔹 얼굴 이미지 적용
     public void ApplySpriteToFace(Sprite sprite)
     {
         if (sprite == null)
@@ -233,7 +257,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(FadeIn(faceSpriteRenderer, faceAppearDuration));
     }
 
-    // 🔹 페이드 인 효과
     public IEnumerator FadeIn(SpriteRenderer sr, float appearDuration)
     {
         float t = 0f;
@@ -250,7 +273,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 🔹 공 초기화
     public void InitBall(GameObject ball)
     {
         if (ball.TryGetComponent<BallController>(out var bc))
