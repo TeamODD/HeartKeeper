@@ -5,16 +5,23 @@ using UnityEngine;
 
 public class MergeBubble : MonoBehaviour
 {
+    [Header("구역 별로 버블 횟수 재확인")]
     public LayerMask areaLM;
     public GameObject leftArea;
     public GameObject rightArea;
     public GameObject middleArea;
 
+    [Header("버블 부착 효과음")]
+    public AudioClip sfxBubbleAttach;
+
     private Rigidbody2D rb;
     private Collision2D collidedObj;
+    private AudioSource audioSource;
 
+    [Header("충돌 판정")]
     public bool isCollide;
-    // private bool canFire = false;
+
+    [Header("씬이 시작되고 waitTime초 만큼 기다린 후 머지")]
     public float waitTime = 3.1f;
 
     private void Start()
@@ -24,6 +31,16 @@ public class MergeBubble : MonoBehaviour
 
         // 시작한지 waitTime초 뒤에 모든 구슬의 고정을 풀고 머지 버블을 한번 호출함
         StartCoroutine(Wait(waitTime));
+
+        if(sfxBubbleAttach != null)
+        {
+            audioSource = GetComponent<AudioSource>();
+
+            audioSource.clip = sfxBubbleAttach;
+            audioSource.loop = false;
+            audioSource.playOnAwake = false;
+            audioSource.volume = 1;
+        }
     }
 
     private void FixedUpdate()
@@ -70,6 +87,10 @@ public class MergeBubble : MonoBehaviour
         rightArea.GetComponent<CountInsideBox>().GetChildCheckBubble();
         middleArea.GetComponent<CountInsideBox>().GetChildCheckBubble();
 
+        // 구슬 합체 효과음
+        if(sfxBubbleAttach != null)
+            audioSource.Play();
+
         // 이후 구슬 합체는 더이상 진행되지 않으므로, 비활성화
         this.enabled = false;
     }
@@ -105,6 +126,6 @@ public class MergeBubble : MonoBehaviour
 
         // 리지드 바디의 bodyType을 kinetic에서 dynamic으로 바꾼다.
         rb.bodyType = RigidbodyType2D.Dynamic;
-        // canFire = true;
+
     }
 }

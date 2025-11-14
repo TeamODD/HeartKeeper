@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Diagnostics.Tracing;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class EscGameStopManager : MonoBehaviour
 {
+    [Header("UI")]
     public Image fadeBlackImg;
-    public Button resumeButton;
     public GameObject gameEndManager;
-    public GameObject panel;
+    public GameObject clickPanel;
+    public GameObject settingPanel;
+    public Button resumeButton;
+    public Button mainButton;
+
+    // 게임 정지, 게임 종료 여부
     private bool isStop = false;
     private bool isGameOver = false;
     private bool isGameClear = false;
@@ -16,6 +22,7 @@ public class EscGameStopManager : MonoBehaviour
     private void Start()
     {
         resumeButton.onClick.AddListener(GameRelease);
+        mainButton.onClick.AddListener(GoToMainScene);
     }
 
     // Update is called once per frame
@@ -35,8 +42,8 @@ public class EscGameStopManager : MonoBehaviour
             c.a = 0.5f;
             fadeBlackImg.color = c;
 
-            resumeButton.gameObject.SetActive(true);
-            panel.SetActive(false);
+            settingPanel.gameObject.SetActive(true);
+            clickPanel.SetActive(false);
 
             // 그리고 Esc를 누르면 시간이 흐르게 함
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -53,8 +60,8 @@ public class EscGameStopManager : MonoBehaviour
             c.a = 0f;
             fadeBlackImg.color = c;
 
-            resumeButton.gameObject.SetActive(false);
-            panel.SetActive(true);
+            settingPanel.gameObject.SetActive(false);
+            clickPanel.SetActive(true);
 
             // 그리고 Esc를 누르면 시간이 멈추게 함
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -68,5 +75,14 @@ public class EscGameStopManager : MonoBehaviour
     private void GameRelease()
     {
         isStop = false;
+    }
+
+    private void GoToMainScene()
+    {
+        // 메인 씬으로 이동
+        resumeButton.onClick.RemoveAllListeners();
+        mainButton.onClick.RemoveAllListeners();
+        string mainTitleScene = "heeil_Title";
+        SceneManager.LoadScene(mainTitleScene);
     }
 }

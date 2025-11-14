@@ -32,7 +32,7 @@ public class GameClearManager : MonoBehaviour
             int rightBubble = rightArea.GetComponent<CountInsideBox>().currentObjCount;
             int middleBubble = middleArea.GetComponent<CountInsideBox>().currentObjCount;
 
-            if (leftBubble == 0 && rightBubble == 0 && middleBubble == 0)
+            if ((leftBubble == 0 && rightBubble == 0 && middleBubble == 0) || isGameClear)
             {
                 // 게임 클리어 상태로 변환
                 isGameClear = true;

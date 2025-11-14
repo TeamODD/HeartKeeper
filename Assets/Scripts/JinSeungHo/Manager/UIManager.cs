@@ -9,13 +9,14 @@ public class UIManager : MonoBehaviour
     public GameObject canvasObj;
 
     // 직접적으로 UI를 관리
+    [Header("UI")]
     public Image gameOverTextImg;
     public Image gameClearTextImg;
     public Image fadeBlack;
     public Button mainButton;
     public Button restartButton;
     // resume 버튼은 EscGameStopManager에서 SetActive 여부를 결정함, 여기서는 false로 초기화
-    public Button resumeButton;
+    public GameObject settingPanel; // 세팅 패널
 
     // 게임 오버시에 얼마나 검게 페이드할 것인지 정하는 변수, (0 ~ 1)
     public float fadeoutAmount = 0.5f;
@@ -32,7 +33,7 @@ public class UIManager : MonoBehaviour
         gameClearTextImg.gameObject.SetActive(false);
         mainButton.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
-        resumeButton.gameObject.SetActive(false);
+        settingPanel.gameObject.SetActive(false);
     }
 
     // 호출시 UI를 전부 보여주고, 활성화함
