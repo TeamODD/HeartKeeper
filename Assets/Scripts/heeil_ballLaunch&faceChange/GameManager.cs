@@ -31,15 +31,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float launchSpeed = 10f;
     [SerializeField] private float settingIntervalTime = 1.0f;
     [SerializeField] private float fireLimitTime = 3f;
-    [SerializeField] private int countDown = 3;
 
     private int currentIndex;
     private int nextIndex;
 
-    private float nextFireBallTime = 0f;
-    private bool canFire = false;
-    private bool canCountDown = false;
-    private bool oneTurn = false;
+    [SerializeField] private  bool canFire = false;
+    // private bool canCountDown = false;
+    [SerializeField] private bool oneTurn = false;
+    [SerializeField] private float netFireTime = 1f;
 
     private List<GameObject> attachedBalls = new List<GameObject>();
 
@@ -59,48 +58,74 @@ public class GameManager : MonoBehaviour
     {
         if (!canFire) return;
 
-        nextFireBallTime += Time.deltaTime;
+        // nextFireBallTime += Time.deltaTime;
 
-        if (nextFireBallTime > fireLimitTime)
-        {
-            Debug.Log("⏱ 자동 발사됨!");
-            FireBall();
-        }
+        // if (nextFireBallTime > fireLimitTime)
+        // {
+        //     Debug.Log("⏱ 자동 발사됨!");
+        //     FireBall();
+        // }
 
-        if (nextFireBallTime > fireLimitTime - countDown && canCountDown)
-        {
-            StartCoroutine(CountDownExact(countDown));
-        }
+        // if (nextFireBallTime > fireLimitTime - countDown && canCountDown)
+        // {
+        //     StartCoroutine(CountDownExact(countDown));
+        // }
     }
 
     public void OnClickBackGround()
     {
-        if (canFire && currentBall != null)
+        if (canFire && currentBall != null )
         {
             Debug.Log("🎯 클릭 발사됨!");
             FireBall();
         }
     }
 
-    public IEnumerator CountDownExact(int seconds, bool unscaled = false)
+    // public IEnumerator CountDownExact(int seconds, bool unscaled = false)
+    // {
+    //     canCountDown = false;
+    //     for (int s = seconds; s > 0; s--)
+    //     {
+    //         countText.text = s.ToString();
+    //         float t = 1f;
+    //         while (t > 0f)
+    //         {
+    //             if (!oneTurn)
+    //             {
+    //                 countText.text = "";
+    //                 yield break;
+    //             }
+    //             t -= unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
+    //             yield return null;
+    //         }
+    //     }
+    //     countText.text = "";
+    // }
+    // public IEnumerator CountDownExact(int seconds, bool unscaled = false)
+    // {
+    //     canCountDown = false;
+    //     for (int s = seconds; s > 0; s--)
+    //     {
+    //         countText.text = s.ToString();
+    //         float t = 1f;
+    //         while (t > 0f)
+    //         {
+    //             if (!oneTurn)
+    //             {
+    //                 countText.text = "";
+    //                 yield break;
+    //             }
+    //             t -= unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
+    //             yield return null;
+    //         }
+    //     }
+    //     countText.text = "";
+    // }
+    public IEnumerator SetToCanFireTime(float seconds)
     {
-        canCountDown = false;
-        for (int s = seconds; s > 0; s--)
-        {
-            countText.text = s.ToString();
-            float t = 1f;
-            while (t > 0f)
-            {
-                if (!oneTurn)
-                {
-                    countText.text = "";
-                    yield break;
-                }
-                t -= unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
-                yield return null;
-            }
-        }
-        countText.text = "";
+        yield return new WaitForSeconds(seconds);
+        yield return canFire = true;
+        
     }
 
     void UnsubscribeBallEvent()
@@ -160,6 +185,7 @@ public class GameManager : MonoBehaviour
         ball.GetComponent<BallController>().launched = false;
     }
 
+    public GameObject fairy;
     public void FireBall()
     {
         if (currentBall == null)
@@ -168,8 +194,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        nextFireBallTime = 0;
-        canCountDown = false;
+        // nextFireBallTime = 0;
+        // canCountDown = false;
         StopAllCoroutines();
 
         var bc = currentBall.GetComponent<BallController>();
@@ -182,17 +208,17 @@ public class GameManager : MonoBehaviour
         bc.Fire();
         canFire = false;
         Debug.Log("💥 공 발사!");
-
+        fairy.GetComponent<FairyGrabThrow>().SetThrow();
         StartCoroutine(ReloadAfterDelay(fireLimitTime));
     }
 
     public void SetBall()
     {
-        oneTurn = true;
-        nextFireBallTime = 0f;
-        canFire = true;
-        canCountDown = true;
-
+        // oneTurn = true;
+        // nextFireBallTime = 0f;
+        // canFire = true;
+        // canCountDown = true;
+        StartCoroutine(SetToCanFireTime(netFireTime));
         if (currentBall != null)
         {
             UnsubscribeBallEvent();
@@ -220,6 +246,7 @@ public class GameManager : MonoBehaviour
         bc.OnHitZone += HandleBallHitZone;
 
         ApplySpriteToFace(faceSprites[nextIndex]);
+       
 
         currentIndex = nextIndex;
         nextIndex = Random.Range(0, ballSprites.Length);
@@ -271,6 +298,10 @@ public class GameManager : MonoBehaviour
             sr.color = c;
             yield return null;
         }
+        c.a = 1f;
+        sr.color = c;
+        // 페이드인 끝 이후 딜레이가 지나야 활성화 해야함.
+        // canFire = true;
     }
 
     public void InitBall(GameObject ball)
@@ -288,6 +319,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         oneTurn = false;
+        canFire=false;
         UnsubscribeBallEvent();
 
         SetBall();
