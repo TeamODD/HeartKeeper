@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.8558218, y: -2.1321137, z: 0}
-  m_LocalScale: {x: 0.74, y: 0.74, z: 1}
+  m_LocalScale: {x: 0.67895, y: 0.67895, z: 0.9175}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6169093331247267248}
@@ -115,12 +115,12 @@ MonoBehaviour:
   arrow: {fileID: 2560368731711724879}
   launched: 0
   launchSpeed: 0
-  maxAimAngle: 60
+  maxAimAngle: 180
   aimMoveSpeed: 50
-  splashEffectRed: {fileID: 0}
-  splashEffectBlue: {fileID: 0}
-  splashEffectYellow: {fileID: 0}
-  splashEffectGreen: {fileID: 0}
+  splashEffectRed: {fileID: 1241173730452920846, guid: 65ee8860af17fa04a9eae8f6c15f9104, type: 3}
+  splashEffectBlue: {fileID: 5282453444476948835, guid: 7fd217a06fbc7de46bc7e0c025456624, type: 3}
+  splashEffectYellow: {fileID: 6616441077846912616, guid: ed09d9105d97e324f8a274eb7699b808, type: 3}
+  splashEffectGreen: {fileID: 8897948983026209035, guid: 43cb48cbd411c384c9f62d293dfa17be, type: 3}
 --- !u!50 &1534017500830147238
 Rigidbody2D:
   serializedVersion: 5
@@ -183,7 +183,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 1.27
 --- !u!82 &6334659745951482032
 AudioSource:
   m_ObjectHideFlags: 0
@@ -296,12 +296,12 @@ MonoBehaviour:
   areaLM:
     serializedVersion: 2
     m_Bits: 64
-  leftArea: {fileID: 0}
-  rightArea: {fileID: 0}
-  middleArea: {fileID: 0}
-  sfxBubbleAttach: {fileID: 0}
+  leftArea: {fileID: 4143079614245987293, guid: 474844b2ef10b4c43abe3e77411e1d9e, type: 3}
+  rightArea: {fileID: 7610170581825961987, guid: 866363569249cf549bedb629a14297be, type: 3}
+  middleArea: {fileID: 745242020857406861, guid: 9247a20d6efb2d94a9a87b727aa75482, type: 3}
+  sfxBubbleAttach: {fileID: 8300000, guid: e15c4abb349ebc94ea4138e4e46ab79c, type: 3}
   isCollide: 0
-  waitTime: 0.5
+  waitTime: 0
 --- !u!114 &6662887425659159180
 MonoBehaviour:
   m_ObjectHideFlags: 0
