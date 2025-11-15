@@ -21,8 +21,8 @@ public class BallController : MonoBehaviour
     [SerializeField] private GameObject arrow;
     public bool launched = false;
     public float launchSpeed;
-    public float maxAimAngle = 120;
-    public float aimMoveSpeed = 40;
+    public float maxAimAngle = 180;
+    public float aimMoveSpeed = 100;
 
     [Header("색깔별 이펙트 프리팹")]
     public GameObject splashEffectRed;
@@ -166,9 +166,12 @@ public class BallController : MonoBehaviour
 
             foreach (var gem in group)
             {
+                deleteSfx.Play();
                 SpawnEffect(gem.gemType, gem.transform.position);
+            }
 
-
+            foreach (var gem in group)
+            {
                 board?.RemoveGem(gem);
                 Destroy(gem.gameObject);
             }
@@ -186,7 +189,7 @@ public class BallController : MonoBehaviour
             if (removedClip != null)
             {
                 // AudioSource.PlayClipAtPoint(removedClip, position);
-                deleteSfx.PlayOneShot(removedClip);
+                deleteSfx.Play();
                 Debug.Log("🔊 삭제 효과음 재생됨 (이펙트 위치)");
             }
         }
